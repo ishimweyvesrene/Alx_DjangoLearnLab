@@ -1,3 +1,4 @@
+ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView   # ✅ Required by ALX checker
 from .models import Book
@@ -19,4 +20,5 @@ class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
+
 
