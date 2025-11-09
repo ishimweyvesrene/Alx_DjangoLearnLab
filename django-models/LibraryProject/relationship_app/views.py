@@ -1,4 +1,57 @@
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import permission_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Book
+
+# Add a new book (requires can_add_book permission)
+@permission_required('relationship_app.can_add_book', raise_exception=True)
+def add_book(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        author = request.POST.get('author')
+        publication_year = request.POST.get('publication_year')
+        isbn = request.POST.get('isbn')
+        description = request.POST.get('description', '')
+        
+        book = Book.objects.create(
+            title=title,
+            author=author,
+            publication_year=publication_year,
+            isbn=isbn,
+            description=description
+        )
+        return redirect('list_books')
+    
+    return render(request, 'relationship_app/add_book.html')
+
+
+# Edit an existing book (requires can_change_book permission)
+@permission_required('relationship_app.can_change_book', raise_exception=True)
+def edit_book(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    
+    if request.method == 'POST':
+        book.title = request.POST.get('title')
+        book.author = request.POST.get('author')
+        book.publication_year = request.POST.get('publication_year')
+        book.isbn = request.POST.get('isbn')
+        book.description = request.POST.get('description', '')
+        book.save()
+        return redirect('book_detail', pk=book.pk)
+    
+    return render(request, 'relationship_app/edit_book.html', {'book': book})
+
+
+# Delete a book (requires can_delete_book permission)
+@permission_required('relationship_app.can_delete_book', raise_exception=True)
+def delete_book(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    
+    if request.method == 'POST':
+        book.delete()
+        return redirect('list_books')
+    
+    return render(request, 'relationship_app/delete_book.html', {'book': book})
 
 def is_admin(user):
     return hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
@@ -29,3 +82,4 @@ def member_view(request):
         'user': request.user,
         'role': request.user.userprofile.role
     })
+
