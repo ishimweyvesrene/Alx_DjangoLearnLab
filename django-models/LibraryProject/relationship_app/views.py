@@ -2,6 +2,10 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView   # ✅ Required by ALX checker
 from .models import Book
 from .models import Library  # ✅ Keep as a separate line for checker
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationFor
+
+
 
 
 # Function-based view to list all books
@@ -15,3 +19,4 @@ class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
+
