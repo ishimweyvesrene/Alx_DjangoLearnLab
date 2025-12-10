@@ -29,3 +29,8 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# social_media_api/urls.py (add)
+path('api/', include('posts.urls')),
+# or more specific
+# path('api/posts/', include('posts.urls')),
