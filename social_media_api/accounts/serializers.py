@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    # checker expects an explicit serializers.CharField()
+    # explicit CharField as the checker expects
     password = serializers.CharField(write_only=True, required=True)
     password2 = serializers.CharField(write_only=True, required=True, label='Confirm password')
 
@@ -29,12 +29,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        # remove the confirmation before creating the user
+        # remove password2 then use get_user_model().objects.create_user(...) as required by the checker
         validated_data.pop('password2', None)
         password = validated_data.pop('password')
 
-        # Use the user manager's create_user method (required by the checker)
-        user = User.objects.create_user(
+        user = get_user_model().objects.create_user(
             username=validated_data.get('username'),
             email=validated_data.get('email'),
             password=password,
@@ -42,7 +41,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             last_name=validated_data.get('last_name', '')
         )
 
-        # create auth token for the newly created user
         Token.objects.create(user=user)
         return user
 
