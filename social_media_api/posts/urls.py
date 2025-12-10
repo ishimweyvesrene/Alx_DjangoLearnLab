@@ -9,4 +9,6 @@ router.register(r'comments', CommentViewSet, basename='comment')
 urlpatterns = [
     path('', include(router.urls)),
     path('posts/<int:pk>/like/', PostLikeToggleAPIView.as_view(), name='post-like'),
+     path('<int:pk>/unlike/', views.unlike_post, name='unlike-post'),
 ]
+
