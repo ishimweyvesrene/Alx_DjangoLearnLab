@@ -5,7 +5,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import get_user_model
-
+from rest_framework import status, permissions
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import RegisterSerializer, UserSerializer, ProfileUpdateSerializer
 
 User = get_user_model()
@@ -68,3 +69,62 @@ class ProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
         if self.request.method == 'GET':
             return UserSerializer
         return ProfileUpdateSerializer
+    
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def follow_user(request, user_id):
+    """
+    Authenticated user follows the user with id=user_id.
+    """
+    try:
+        target = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if target == request.user:
+        return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # add current user to target.followers
+    target.followers.add(request.user)
+    return Response({'detail': 'Followed.', 'target': UserSerializer(target, context={'request': request}).data})
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def unfollow_user(request, user_id):
+    """
+    Authenticated user unfollows the user with id=user_id.
+    """
+    try:
+        target = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if target == request.user:
+        return Response({'detail': 'You cannot unfollow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    target.followers.remove(request.user)
+    return Response({'detail': 'Unfollowed.', 'target': UserSerializer(target, context={'request': request}).data})
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def my_following(request):
+    """
+    Return list of users that the authenticated user follows.
+    """
+    following_qs = request.user.following.all()
+    serializer = UserSerializer(following_qs, many=True, context={'request': request})
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def my_followers(request):
+    """
+    Return list of users who follow the authenticated user.
+    """
+    followers_qs = request.user.followers.all()
+    serializer = UserSerializer(followers_qs, many=True, context={'request': request})
+    return Response(serializer.data)
+    
