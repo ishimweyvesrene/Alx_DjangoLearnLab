@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #1976d2;
+            border-bottom: 3px solid #1976d2;
+            padding-bottom: 10px;
+        }
+        .user-info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .functions {
+            margin: 20px 0;
+        }
+        .functions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .functions li {
+            background-color: #f5f5f5;
+            padding: 12px;
+            margin: 8px 0;
+            border-left: 4px solid #1976d2;
+        }
+        nav {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Librarian Dashboard</h1>
+        
+        <div class="user-info">
+            <p>Welcome, <strong>{{ user.username }}</strong>!</p>
+            <p>Your role: <strong>{{ role }}</strong></p>
+            <p>You have librarian access to manage books and loans.</p>
+        </div>
+        
+        <div class="functions">
+            <h2>Librarian Functions</h2>
+            <ul>
+                <li>📖 Add and edit book information</li>
+                <li>✅ Approve and manage book loans</li>
+                <li>🔄 Process book returns</li>
+                <li>👥 View member information</li>
+                <li>📋 Track overdue books</li>
+                <li>🔍 Search and catalog books</li>
+            </ul>
+        </div>
+        
+        <nav>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </div>
+</body>
+</html>
