@@ -9,7 +9,7 @@ from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from .serializers import RegisterSerializer, UserSerializer, ProfileUpdateSerializer
 from .models import CustomUser
-
+from notifications.utils import create_notification
 User = get_user_model()
 
 
@@ -88,6 +88,7 @@ def follow_user(request, user_id):
 
     # add current user to target.followers
     target.followers.add(request.user)
+    create_notification(recipient=target, actor=request.user, verb='followed you')
     return Response({'detail': 'Followed.', 'target': UserSerializer(target, context={'request': request}).data})
 
 @api_view(['POST'])
