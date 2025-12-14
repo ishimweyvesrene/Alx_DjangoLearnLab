@@ -151,5 +151,9 @@ DATABASES = {
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+//database setting 
+
+PORT = os.environ.get("PORT", "8000")
+
 
 
